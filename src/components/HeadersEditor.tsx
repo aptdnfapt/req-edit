@@ -5,9 +5,12 @@ interface Header { key: string; value: string }
 interface Props {
   headers: Header[];
   onChange: (headers: Header[]) => void;
+  colors: any;
 }
 
-export function HeadersEditor({ headers, onChange }: Props) {
+export function HeadersEditor({ headers, onChange, colors }: Props) {
+  const styles = getStyles(colors);
+
   const update = (i: number, field: 'key' | 'value', v: string) => {
     const updated = [...headers];
     updated[i] = { ...updated[i], [field]: v };
@@ -34,7 +37,7 @@ export function HeadersEditor({ headers, onChange }: Props) {
               placeholder="Value"
               style={styles.valueInput}
             />
-            <button onClick={() => remove(i)} style={styles.removeBtn}>×</button>
+            <button onClick={() => remove(i)} style={styles.removeBtn}>X</button>
           </div>
         ))}
       </div>
@@ -43,63 +46,61 @@ export function HeadersEditor({ headers, onChange }: Props) {
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-  },
-  list: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-    maxHeight: '200px',
-    overflowY: 'auto',
-  },
-  row: {
-    display: 'flex',
-    gap: '4px',
-    alignItems: 'center',
-  },
-  keyInput: {
-    flex: '0 0 90px',
-    padding: '5px 8px',
-    borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#e2e8f0',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-  },
-  valueInput: {
-    flex: 1,
-    padding: '5px 8px',
-    borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#e2e8f0',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    minWidth: 0,
-  },
-  removeBtn: {
-    padding: '2px 6px',
-    borderRadius: '3px',
-    border: 'none',
-    backgroundColor: '#7f1d1d',
-    color: '#fca5a5',
-    cursor: 'pointer',
-    fontSize: '12px',
-    lineHeight: 1,
-  },
-  addBtn: {
-    padding: '4px 8px',
-    borderRadius: '4px',
-    border: '1px dashed #475569',
-    backgroundColor: 'transparent',
-    color: '#94a3b8',
-    cursor: 'pointer',
-    fontSize: '11px',
-    textAlign: 'left',
-  },
-};
+function getStyles(c: any): Record<string, React.CSSProperties> {
+  return {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '6px',
+    },
+    list: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '3px',
+      maxHeight: '180px',
+      overflowY: 'auto',
+    },
+    row: {
+      display: 'flex',
+      gap: '3px',
+      alignItems: 'center',
+    },
+    keyInput: {
+      flex: '0 0 80px',
+      padding: '4px 6px',
+      border: `1px solid ${c.border}`,
+      backgroundColor: c.bgAlt2,
+      color: c.text,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+    },
+    valueInput: {
+      flex: 1,
+      padding: '4px 6px',
+      border: `1px solid ${c.border}`,
+      backgroundColor: c.bgAlt2,
+      color: c.text,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+      minWidth: 0,
+    },
+    removeBtn: {
+      padding: '2px 6px',
+      border: 'none',
+      backgroundColor: c.error,
+      color: c.errorText,
+      cursor: 'pointer',
+      fontSize: '9px',
+      fontWeight: 600,
+    },
+    addBtn: {
+      padding: '4px 6px',
+      border: `1px dashed ${c.borderAlt}`,
+      backgroundColor: 'transparent',
+      color: c.textMuted,
+      cursor: 'pointer',
+      fontSize: '10px',
+      textAlign: 'left',
+    },
+  };
+}

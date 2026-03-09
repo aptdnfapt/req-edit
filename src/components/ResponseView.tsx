@@ -7,13 +7,15 @@ interface Props {
   error: any;
   rawStream: string;
   isStreaming: boolean;
+  colors: any;
 }
 
-export function ResponseView({ response, error, rawStream, isStreaming }: Props) {
+export function ResponseView({ response, error, rawStream, isStreaming, colors }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<JSONEditor | null>(null);
   const [view, setView] = useState<'tree' | 'raw'>('raw');
   const isStream = isStreaming || rawStream.length > 0;
+  const styles = getStyles(colors);
 
   useEffect(() => {
     if (containerRef.current && !editorRef.current && view === 'tree' && response) {
@@ -71,14 +73,8 @@ export function ResponseView({ response, error, rawStream, isStreaming }: Props)
     <div style={styles.container}>
       <div style={styles.header}>
         <div style={styles.tabs}>
-          <button 
-            onClick={() => setView('raw')} 
-            style={{ ...styles.tab, ...(view === 'raw' ? styles.tabActive : {}) }}
-          >Raw</button>
-          <button 
-            onClick={() => setView('tree')} 
-            style={{ ...styles.tab, ...(view === 'tree' ? styles.tabActive : {}) }}
-          >Tree</button>
+          <button onClick={() => setView('raw')} style={{ ...styles.tab, ...(view === 'raw' ? styles.tabActive : {}) }}>RAW</button>
+          <button onClick={() => setView('tree')} style={{ ...styles.tab, ...(view === 'tree' ? styles.tabActive : {}) }}>TREE</button>
         </div>
       </div>
       
@@ -93,93 +89,94 @@ export function ResponseView({ response, error, rawStream, isStreaming }: Props)
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    overflow: 'hidden',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: '4px 8px',
-    borderBottom: '1px solid #1e293b',
-    flexShrink: 0,
-  },
-  tabs: {
-    display: 'flex',
-    gap: '2px',
-  },
-  tab: {
-    padding: '3px 8px',
-    borderRadius: '3px',
-    border: 'none',
-    backgroundColor: 'transparent',
-    color: '#64748b',
-    cursor: 'pointer',
-    fontSize: '10px',
-  },
-  tabActive: {
-    backgroundColor: '#334155',
-    color: '#e2e8f0',
-  },
-  content: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  editorWrap: {
-    height: '100%',
-  },
-  rawContent: {
-    padding: '8px',
-    margin: 0,
-    color: '#e2e8f0',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-all',
-  },
-  errorBox: {
-    padding: '8px',
-    flex: 1,
-    overflow: 'auto',
-  },
-  errorTitle: {
-    color: '#f87171',
-    fontWeight: 600,
-    marginBottom: '6px',
-    fontSize: '12px',
-  },
-  errorContent: {
-    margin: 0,
-    color: '#fca5a5',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-all',
-    backgroundColor: '#1a0000',
-    padding: '8px',
-    borderRadius: '4px',
-  },
-  streamBox: {
-    flex: 1,
-    overflow: 'auto',
-    padding: '8px',
-  },
-  streamContent: {
-    margin: 0,
-    color: '#7dd3fc',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-all',
-  },
-  empty: {
-    padding: '20px',
-    textAlign: 'center',
-    color: '#64748b',
-    fontSize: '12px',
-  },
-};
+function getStyles(c: any): Record<string, React.CSSProperties> {
+  return {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      overflow: 'hidden',
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      padding: '3px 6px',
+      borderBottom: `1px solid ${c.border}`,
+      flexShrink: 0,
+    },
+    tabs: {
+      display: 'flex',
+      gap: '2px',
+    },
+    tab: {
+      padding: '2px 6px',
+      border: 'none',
+      backgroundColor: 'transparent',
+      color: c.textMuted,
+      cursor: 'pointer',
+      fontSize: '9px',
+      fontWeight: 600,
+    },
+    tabActive: {
+      backgroundColor: c.accent,
+      color: c.text,
+    },
+    content: {
+      flex: 1,
+      overflow: 'auto',
+    },
+    editorWrap: {
+      height: '100%',
+    },
+    rawContent: {
+      padding: '6px',
+      margin: 0,
+      color: c.text,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-all',
+    },
+    errorBox: {
+      padding: '6px',
+      flex: 1,
+      overflow: 'auto',
+    },
+    errorTitle: {
+      color: c.errorText,
+      fontWeight: 600,
+      marginBottom: '4px',
+      fontSize: '11px',
+    },
+    errorContent: {
+      margin: 0,
+      color: c.errorText,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-all',
+      backgroundColor: c.error,
+      padding: '6px',
+    },
+    streamBox: {
+      flex: 1,
+      overflow: 'auto',
+      padding: '6px',
+    },
+    streamContent: {
+      margin: 0,
+      color: c.textMuted,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-all',
+    },
+    empty: {
+      padding: '20px',
+      textAlign: 'center',
+      color: c.textMuted,
+      fontSize: '11px',
+    },
+  };
+}

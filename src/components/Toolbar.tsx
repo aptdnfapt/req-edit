@@ -9,9 +9,12 @@ interface Props {
   onRedo: () => void;
   onRun: () => void;
   isRunning: boolean;
+  colors: any;
 }
 
-export function Toolbar({ parsed, canUndo, canRedo, onUndo, onRedo, onRun, isRunning }: Props) {
+export function Toolbar({ parsed, canUndo, canRedo, onUndo, onRedo, onRun, isRunning, colors }: Props) {
+  const styles = getStyles(colors);
+
   const copyCurl = (format: 'minified' | 'pretty') => {
     if (!parsed) return;
     const curl = format === 'minified' ? toMinifiedCurl(parsed) : toPrettyCurl(parsed);
@@ -20,75 +23,41 @@ export function Toolbar({ parsed, canUndo, canRedo, onUndo, onRedo, onRun, isRun
 
   return (
     <div style={styles.container}>
-      <div style={styles.group}>
-        <button 
-          onClick={onUndo} 
-          disabled={!canUndo}
-          style={{ ...styles.btn, ...(canUndo ? {} : styles.btnDisabled) }}
-          title="Undo"
-        >↶</button>
-        <button 
-          onClick={onRedo} 
-          disabled={!canRedo}
-          style={{ ...styles.btn, ...(canRedo ? {} : styles.btnDisabled) }}
-          title="Redo"
-        >↷</button>
-      </div>
-      
-      <div style={styles.group}>
-        <button 
-          onClick={() => copyCurl('minified')} 
-          disabled={!parsed}
-          style={{ ...styles.btn, ...(parsed ? {} : styles.btnDisabled) }}
-          title="Copy minified curl"
-        >{ }{ }{ }</button>
-        <button 
-          onClick={() => copyCurl('pretty')} 
-          disabled={!parsed}
-          style={{ ...styles.btn, ...(parsed ? {} : styles.btnDisabled) }}
-          title="Copy pretty curl"
-        >{  }</button>
-      </div>
-
-      <button 
-        onClick={onRun} 
-        disabled={!parsed || isRunning}
-        style={{ ...styles.btn, ...styles.btnRun, ...((parsed && !isRunning) ? {} : styles.btnDisabled) }}
-      >
-        {isRunning ? '...' : '▶'}
+      <button onClick={onUndo} disabled={!canUndo} style={{ ...styles.btn, ...(!canUndo ? styles.btnDisabled : {}) }} title="Undo">UNDO</button>
+      <button onClick={onRedo} disabled={!canRedo} style={{ ...styles.btn, ...(!canRedo ? styles.btnDisabled : {}) }} title="Redo">REDO</button>
+      <button onClick={() => copyCurl('minified')} disabled={!parsed} style={{ ...styles.btn, ...(!parsed ? styles.btnDisabled : {}) }} title="Copy minified">MIN</button>
+      <button onClick={() => copyCurl('pretty')} disabled={!parsed} style={{ ...styles.btn, ...(!parsed ? styles.btnDisabled : {}) }} title="Copy pretty">FMT</button>
+      <button onClick={onRun} disabled={!parsed || isRunning} style={{ ...styles.btn, ...styles.btnRun, ...((parsed && !isRunning) ? {} : styles.btnDisabled) }}>
+        {isRunning ? '...' : 'RUN'}
       </button>
     </div>
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-  },
-  group: {
-    display: 'flex',
-    gap: '2px',
-  },
-  btn: {
-    padding: '5px 10px',
-    borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#94a3b8',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontSize: '12px',
-  },
-  btnRun: {
-    backgroundColor: '#059669',
-    borderColor: '#059669',
-    color: 'white',
-    padding: '5px 14px',
-  },
-  btnDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-};
+function getStyles(c: any): Record<string, React.CSSProperties> {
+  return {
+    container: {
+      display: 'flex',
+      gap: '4px',
+      alignItems: 'center',
+    },
+    btn: {
+      padding: '4px 10px',
+      border: 'none',
+      backgroundColor: c.bgAlt2,
+      color: c.textMuted,
+      fontWeight: 600,
+      cursor: 'pointer',
+      fontSize: '10px',
+    },
+    btnRun: {
+      backgroundColor: c.success,
+      color: c.text,
+      fontWeight: 700,
+    },
+    btnDisabled: {
+      opacity: 0.4,
+      cursor: 'not-allowed',
+    },
+  };
+}

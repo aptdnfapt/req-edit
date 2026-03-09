@@ -4,9 +4,12 @@ interface Props {
   value: string;
   onChange: (v: string) => void;
   onParse: () => void;
+  colors: any;
 }
 
-export function CurlInput({ value, onChange, onParse }: Props) {
+export function CurlInput({ value, onChange, onParse, colors }: Props) {
+  const styles = getStyles(colors);
+
   return (
     <div style={styles.container}>
       <textarea
@@ -23,39 +26,39 @@ export function CurlInput({ value, onChange, onParse }: Props) {
         }}
       />
       <button onClick={onParse} style={styles.button}>
-        Parse
+        PARSE
       </button>
     </div>
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-  },
-  textarea: {
-    flex: 1,
-    height: '36px',
-    padding: '8px 12px',
-    borderRadius: '6px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#e2e8f0',
-    fontSize: '12px',
-    fontFamily: 'monospace',
-    resize: 'none',
-  },
-  button: {
-    padding: '8px 16px',
-    borderRadius: '6px',
-    border: 'none',
-    backgroundColor: '#3b82f6',
-    color: 'white',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontSize: '13px',
-    whiteSpace: 'nowrap',
-  },
-};
+function getStyles(c: any): Record<string, React.CSSProperties> {
+  return {
+    container: {
+      display: 'flex',
+      gap: '8px',
+      alignItems: 'center',
+    },
+    textarea: {
+      flex: 1,
+      height: '28px',
+      padding: '6px 10px',
+      border: `1px solid ${c.border}`,
+      backgroundColor: c.bgAlt2,
+      color: c.text,
+      fontSize: '11px',
+      fontFamily: 'monospace',
+      resize: 'none',
+    },
+    button: {
+      padding: '6px 14px',
+      border: 'none',
+      backgroundColor: c.accent,
+      color: c.text,
+      fontWeight: 600,
+      cursor: 'pointer',
+      fontSize: '11px',
+      whiteSpace: 'nowrap',
+    },
+  };
+}

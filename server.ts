@@ -10,9 +10,15 @@ app.post('/api/run', async (req, res) => {
 
   try {
     const fetchHeaders: Record<string, string> = {};
-    headers.forEach((h: { key: string; value: string }) => {
-      if (h.key && h.value) fetchHeaders[h.key] = h.value;
-    });
+    if (Array.isArray(headers)) {
+      headers.forEach((h: { key: string; value: string }) => {
+        if (h.key && h.value) fetchHeaders[h.key] = h.value;
+      });
+    } else if (headers && typeof headers === 'object') {
+      Object.entries(headers).forEach(([key, value]) => {
+        if (key && value) fetchHeaders[key] = String(value);
+      });
+    }
 
     const response = await fetch(url, {
       method: method || 'GET',

@@ -5,16 +5,15 @@ interface Props {
   method: string;
   onUrlChange: (url: string) => void;
   onMethodChange: (method: string) => void;
+  colors: any;
 }
 
-export function UrlBar({ url, method, onUrlChange, onMethodChange }: Props) {
+export function UrlBar({ url, method, onUrlChange, onMethodChange, colors }: Props) {
+  const styles = getStyles(colors);
+
   return (
     <div style={styles.container}>
-      <select 
-        value={method} 
-        onChange={e => onMethodChange(e.target.value)}
-        style={styles.select}
-      >
+      <select value={method} onChange={e => onMethodChange(e.target.value)} style={styles.select}>
         <option>GET</option>
         <option>POST</option>
         <option>PUT</option>
@@ -33,32 +32,32 @@ export function UrlBar({ url, method, onUrlChange, onMethodChange }: Props) {
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    gap: '6px',
-    alignItems: 'center',
-  },
-  select: {
-    padding: '6px 10px',
-    borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#e2e8f0',
-    fontSize: '11px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    width: '70px',
-  },
-  input: {
-    flex: 1,
-    padding: '6px 10px',
-    borderRadius: '4px',
-    border: '1px solid #334155',
-    backgroundColor: '#1e293b',
-    color: '#7dd3fc',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    minWidth: 0,
-  },
-};
+function getStyles(c: any): Record<string, React.CSSProperties> {
+  return {
+    container: {
+      display: 'flex',
+      gap: '4px',
+      alignItems: 'center',
+    },
+    select: {
+      padding: '5px 8px',
+      border: `1px solid ${c.border}`,
+      backgroundColor: c.bgAlt2,
+      color: c.text,
+      fontSize: '10px',
+      fontWeight: 600,
+      cursor: 'pointer',
+      width: '65px',
+    },
+    input: {
+      flex: 1,
+      padding: '5px 8px',
+      border: `1px solid ${c.border}`,
+      backgroundColor: c.bgAlt2,
+      color: c.textMuted,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+      minWidth: 0,
+    },
+  };
+}
