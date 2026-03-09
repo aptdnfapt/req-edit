@@ -19,6 +19,9 @@ const emptyParsed: ParsedCurl = {
 
 export function App() {
   const [curlInput, setCurlInput] = useState('');
+  const [showInput, setShowInput] = useState(true);
+  const [showResponse, setShowResponse] = useState(true);
+  const [responseHeight, setResponseHeight] = useState(250);
   const { state: parsed, push: pushHistory, undo, redo, canUndo, canRedo, reset: resetHistory } = useHistory<ParsedCurl>(emptyParsed);
   const [response, setResponse] = useState<any>(null);
   const [error, setError] = useState<any>(null);
@@ -33,6 +36,7 @@ export function App() {
     setResponse(null);
     setError(null);
     setRawStream('');
+    setShowInput(false);
   }, [curlInput, resetHistory]);
 
   const handleUrlChange = useCallback((url: string) => {
@@ -60,6 +64,7 @@ export function App() {
     setError(null);
     setResponse(null);
     setRawStream('');
+    setShowResponse(true);
     
     if (isStreamRequest) {
       setIsStreaming(true);
@@ -84,7 +89,7 @@ export function App() {
         const result = await runRequest({
           url: parsed.url,
           method: parsed.method,
-          headers: parsed.headers,
+          headers: parsed.body,
           body: parsed.body,
         });
         if (result.error) {
@@ -121,107 +126,234 @@ export function App() {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.title}>LLM Request Block Editor</h1>
+        <div style={styles.headerLeft}>
+          <h1 style={styles.title}>LLM Request Editor</h1>
+          <button 
+            onClick={() => setShowInput(!showInput)} 
+            style={{ ...styles.headerBtn, ...(showInput ? styles.headerBtnActive : {}) }}
+            title="Toggle curl input"
+          >
+            {showInput ? '📋' : '📄'}
+          </button>
+          <button 
+            onClick={() => setShowResponse(!showResponse)} 
+            style={{ ...styles.headerBtn, ...(showResponse ? styles.headerBtnActive : {}) }}
+            title="Toggle response panel"
+          >
+            {showResponse ? '📤' : '📥'}
+          </button>
+        </div>
+        <Toolbar
+          parsed={parsed}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          onUndo={undo}
+          onRedo={redo}
+          onRun={handleRun}
+          isRunning={isRunning}
+        />
       </header>
 
-      <main style={styles.main}>
-        <section style={styles.inputSection}>
+      {showInput && (
+        <div style={styles.inputBar}>
           <CurlInput
             value={curlInput}
             onChange={setCurlInput}
             onParse={handleParse}
           />
-        </section>
+        </div>
+      )}
 
-        {parsed.url && (
-          <>
-            <Toolbar
-              parsed={parsed}
-              canUndo={canUndo}
-              canRedo={canRedo}
-              onUndo={undo}
-              onRedo={redo}
-              onRun={handleRun}
-              isRunning={isRunning}
-            />
-
-            <section style={styles.editSection}>
-              <div style={styles.topRow}>
-                <UrlBar
-                  url={parsed.url}
-                  method={parsed.method}
-                  onUrlChange={handleUrlChange}
-                  onMethodChange={handleMethodChange}
-                />
-              </div>
+      {parsed.url && (
+        <div style={{ ...styles.main, ...(showResponse ? { height: `calc(100vh - 120px - ${responseHeight}px)` } : {}) }}>
+          <aside style={styles.sidebar}>
+            <div style={styles.sidebarSection}>
+              <div style={styles.sidebarTitle}>Request</div>
+              <UrlBar
+                url={parsed.url}
+                method={parsed.method}
+                onUrlChange={handleUrlChange}
+                onMethodChange={handleMethodChange}
+              />
+            </div>
+            <div style={styles.sidebarSection}>
+              <div style={styles.sidebarTitle}>Headers</div>
               <HeadersEditor
                 headers={parsed.headers}
                 onChange={handleHeadersChange}
               />
-              <div style={styles.payloadSection}>
-                <PayloadTree
-                  data={parsed.body}
-                  url={parsed.url}
-                  onChange={handleBodyChange}
-                />
-              </div>
-            </section>
+            </div>
+          </aside>
+          <main style={styles.editor}>
+            <PayloadTree
+              data={parsed.body}
+              url={parsed.url}
+              onChange={handleBodyChange}
+            />
+          </main>
+        </div>
+      )}
 
-            <section style={styles.responseSection}>
-              <ResponseView
-                response={response}
-                error={error}
-                rawStream={rawStream}
-                isStreaming={isStreaming}
-              />
-            </section>
-          </>
-        )}
-      </main>
+      {showResponse && (response || error || rawStream || isStreaming) && (
+        <div style={{ ...styles.responseDrawer, height: responseHeight }}>
+          <div 
+            style={styles.resizeHandle}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              const startY = e.clientY;
+              const startHeight = responseHeight;
+              const onMouseMove = (e: MouseEvent) => {
+                const newHeight = startHeight - (e.clientY - startY);
+                setResponseHeight(Math.max(100, Math.min(500, newHeight)));
+              };
+              const onMouseUp = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              };
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            }}
+          />
+          <div style={styles.responseHeader}>
+            <span style={styles.responseTitle}>Response</span>
+            <button onClick={() => setShowResponse(false)} style={styles.closeBtn}>×</button>
+          </div>
+          <div style={styles.responseContent}>
+            <ResponseView
+              response={response}
+              error={error}
+              rawStream={rawStream}
+              isStreaming={isStreaming}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    minHeight: '100vh',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
     backgroundColor: '#020617',
     color: '#e2e8f0',
+    overflow: 'hidden',
   },
   header: {
-    padding: '16px 24px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '8px 16px',
     borderBottom: '1px solid #1e293b',
+    backgroundColor: '#0f172a',
+    flexShrink: 0,
+  },
+  headerLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
   },
   title: {
     margin: 0,
-    fontSize: '20px',
-    fontWeight: 700,
+    fontSize: '16px',
+    fontWeight: 600,
     color: '#f8fafc',
   },
+  headerBtn: {
+    padding: '6px 8px',
+    borderRadius: '4px',
+    border: '1px solid #334155',
+    backgroundColor: '#1e293b',
+    color: '#94a3b8',
+    cursor: 'pointer',
+    fontSize: '14px',
+    opacity: 0.6,
+  },
+  headerBtnActive: {
+    opacity: 1,
+    backgroundColor: '#334155',
+    borderColor: '#475569',
+  },
+  inputBar: {
+    padding: '12px 16px',
+    borderBottom: '1px solid #1e293b',
+    flexShrink: 0,
+  },
   main: {
-    padding: '24px',
+    display: 'flex',
+    flex: 1,
+    minHeight: 0,
+    overflow: 'hidden',
+  },
+  sidebar: {
+    width: '320px',
+    minWidth: '280px',
+    backgroundColor: '#0f172a',
+    borderRight: '1px solid #1e293b',
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px',
-    maxWidth: '1400px',
-    margin: '0 auto',
+    overflow: 'auto',
+    flexShrink: 0,
   },
-  inputSection: {
-    marginBottom: '8px',
+  sidebarSection: {
+    padding: '12px',
+    borderBottom: '1px solid #1e293b',
   },
-  editSection: {
+  sidebarTitle: {
+    fontSize: '11px',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    color: '#64748b',
+    marginBottom: '10px',
+    letterSpacing: '0.5px',
+  },
+  editor: {
+    flex: 1,
+    overflow: 'auto',
+    padding: '12px',
+    backgroundColor: '#020617',
+  },
+  responseDrawer: {
+    backgroundColor: '#0f172a',
+    borderTop: '1px solid #1e293b',
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    flexShrink: 0,
   },
-  topRow: {
+  resizeHandle: {
+    height: '4px',
+    cursor: 'ns-resize',
+    backgroundColor: '#1e293b',
+    transition: 'background-color 0.2s',
+  },
+  responseHeader: {
     display: 'flex',
-    gap: '16px',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '8px 12px',
+    borderBottom: '1px solid #1e293b',
+    backgroundColor: '#1e293b',
   },
-  payloadSection: {
-    marginTop: '8px',
+  responseTitle: {
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
   },
-  responseSection: {
-    marginTop: '8px',
+  closeBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#64748b',
+    fontSize: '18px',
+    cursor: 'pointer',
+    padding: '0 4px',
+  },
+  responseContent: {
+    flex: 1,
+    overflow: 'auto',
+    padding: '8px',
   },
 };

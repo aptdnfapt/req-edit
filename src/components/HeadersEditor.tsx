@@ -19,29 +19,26 @@ export function HeadersEditor({ headers, onChange }: Props) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <span style={styles.title}>Headers</span>
-        <button onClick={add} style={styles.addBtn}>+ Add</button>
-      </div>
       <div style={styles.list}>
         {headers.map((h, i) => (
           <div key={i} style={styles.row}>
             <input
               value={h.key}
               onChange={e => update(i, 'key', e.target.value)}
-              placeholder="Header name"
-              style={{ ...styles.input, flex: 1 }}
+              placeholder="Name"
+              style={styles.keyInput}
             />
             <input
               value={h.value}
               onChange={e => update(i, 'value', e.target.value)}
-              placeholder="Header value"
-              style={{ ...styles.input, flex: 2 }}
+              placeholder="Value"
+              style={styles.valueInput}
             />
             <button onClick={() => remove(i)} style={styles.removeBtn}>×</button>
           </div>
         ))}
       </div>
+      <button onClick={add} style={styles.addBtn}>+ Add Header</button>
     </div>
   );
 }
@@ -50,54 +47,59 @@ const styles: Record<string, React.CSSProperties> = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: '14px',
-    fontWeight: 600,
-    color: '#e2e8f0',
-  },
-  addBtn: {
-    padding: '4px 12px',
-    borderRadius: '4px',
-    border: 'none',
-    backgroundColor: '#1e40af',
-    color: 'white',
-    cursor: 'pointer',
-    fontSize: '12px',
+    gap: '6px',
   },
   list: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px',
+    gap: '4px',
+    maxHeight: '200px',
+    overflowY: 'auto',
   },
   row: {
     display: 'flex',
-    gap: '8px',
+    gap: '4px',
     alignItems: 'center',
   },
-  input: {
-    padding: '8px 10px',
-    borderRadius: '6px',
+  keyInput: {
+    flex: '0 0 90px',
+    padding: '5px 8px',
+    borderRadius: '4px',
     border: '1px solid #334155',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#1e293b',
     color: '#e2e8f0',
-    fontSize: '13px',
+    fontSize: '11px',
     fontFamily: 'monospace',
   },
-  removeBtn: {
-    padding: '4px 10px',
+  valueInput: {
+    flex: 1,
+    padding: '5px 8px',
     borderRadius: '4px',
+    border: '1px solid #334155',
+    backgroundColor: '#1e293b',
+    color: '#e2e8f0',
+    fontSize: '11px',
+    fontFamily: 'monospace',
+    minWidth: 0,
+  },
+  removeBtn: {
+    padding: '2px 6px',
+    borderRadius: '3px',
     border: 'none',
-    backgroundColor: '#991b1b',
-    color: 'white',
+    backgroundColor: '#7f1d1d',
+    color: '#fca5a5',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontSize: '12px',
     lineHeight: 1,
+  },
+  addBtn: {
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: '1px dashed #475569',
+    backgroundColor: 'transparent',
+    color: '#94a3b8',
+    cursor: 'pointer',
+    fontSize: '11px',
+    textAlign: 'left',
   },
 };

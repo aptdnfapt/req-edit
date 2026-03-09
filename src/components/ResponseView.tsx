@@ -12,7 +12,7 @@ interface Props {
 export function ResponseView({ response, error, rawStream, isStreaming }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<JSONEditor | null>(null);
-  const [view, setView] = useState<'tree' | 'raw'>('tree');
+  const [view, setView] = useState<'tree' | 'raw'>('raw');
   const isStream = isStreaming || rawStream.length > 0;
 
   useEffect(() => {
@@ -56,9 +56,6 @@ export function ResponseView({ response, error, rawStream, isStreaming }: Props)
   if (isStream) {
     return (
       <div style={styles.container}>
-        <div style={styles.header}>
-          <span style={styles.title}>Response (Streaming)</span>
-        </div>
         <div style={styles.streamBox}>
           <pre style={styles.streamContent}>{rawStream}</pre>
         </div>
@@ -73,16 +70,15 @@ export function ResponseView({ response, error, rawStream, isStreaming }: Props)
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <span style={styles.title}>Response</span>
         <div style={styles.tabs}>
-          <button 
-            onClick={() => setView('tree')} 
-            style={{ ...styles.tab, ...(view === 'tree' ? styles.tabActive : {}) }}
-          >Tree</button>
           <button 
             onClick={() => setView('raw')} 
             style={{ ...styles.tab, ...(view === 'raw' ? styles.tabActive : {}) }}
           >Raw</button>
+          <button 
+            onClick={() => setView('tree')} 
+            style={{ ...styles.tab, ...(view === 'tree' ? styles.tabActive : {}) }}
+          >Tree</button>
         </div>
       </div>
       
@@ -101,96 +97,89 @@ const styles: Record<string, React.CSSProperties> = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    height: '100%',
+    overflow: 'hidden',
   },
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  title: {
-    fontSize: '14px',
-    fontWeight: 600,
-    color: '#e2e8f0',
+    padding: '4px 8px',
+    borderBottom: '1px solid #1e293b',
+    flexShrink: 0,
   },
   tabs: {
     display: 'flex',
-    gap: '4px',
+    gap: '2px',
   },
   tab: {
-    padding: '4px 12px',
-    borderRadius: '4px',
+    padding: '3px 8px',
+    borderRadius: '3px',
     border: 'none',
-    backgroundColor: '#1e293b',
-    color: '#94a3b8',
+    backgroundColor: 'transparent',
+    color: '#64748b',
     cursor: 'pointer',
-    fontSize: '12px',
+    fontSize: '10px',
   },
   tabActive: {
-    backgroundColor: '#3b82f6',
-    color: 'white',
+    backgroundColor: '#334155',
+    color: '#e2e8f0',
   },
   content: {
-    borderRadius: '8px',
-    border: '1px solid #334155',
-    backgroundColor: '#0f172a',
-    overflow: 'hidden',
+    flex: 1,
+    overflow: 'auto',
   },
   editorWrap: {
-    height: '400px',
+    height: '100%',
   },
   rawContent: {
-    padding: '12px',
+    padding: '8px',
     margin: 0,
     color: '#e2e8f0',
-    fontSize: '13px',
-    fontFamily: 'monospace',
-    maxHeight: '400px',
-    overflow: 'auto',
-    whiteSpace: 'pre-wrap',
-  },
-  errorBox: {
-    borderRadius: '8px',
-    border: '1px solid #991b1b',
-    backgroundColor: '#1a0000',
-    padding: '12px',
-  },
-  errorTitle: {
-    color: '#f87171',
-    fontWeight: 600,
-    marginBottom: '8px',
-    fontSize: '14px',
-  },
-  errorContent: {
-    margin: 0,
-    color: '#fca5a5',
-    fontSize: '12px',
+    fontSize: '11px',
     fontFamily: 'monospace',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-all',
   },
-  streamBox: {
-    borderRadius: '8px',
-    border: '1px solid #334155',
-    backgroundColor: '#0f172a',
-    padding: '12px',
-    maxHeight: '400px',
+  errorBox: {
+    padding: '8px',
+    flex: 1,
     overflow: 'auto',
+  },
+  errorTitle: {
+    color: '#f87171',
+    fontWeight: 600,
+    marginBottom: '6px',
+    fontSize: '12px',
+  },
+  errorContent: {
+    margin: 0,
+    color: '#fca5a5',
+    fontSize: '11px',
+    fontFamily: 'monospace',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-all',
+    backgroundColor: '#1a0000',
+    padding: '8px',
+    borderRadius: '4px',
+  },
+  streamBox: {
+    flex: 1,
+    overflow: 'auto',
+    padding: '8px',
   },
   streamContent: {
     margin: 0,
     color: '#7dd3fc',
-    fontSize: '12px',
+    fontSize: '11px',
     fontFamily: 'monospace',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-all',
   },
   empty: {
-    padding: '40px',
+    padding: '20px',
     textAlign: 'center',
     color: '#64748b',
-    fontSize: '14px',
-    borderRadius: '8px',
-    border: '1px dashed #334155',
+    fontSize: '12px',
   },
 };

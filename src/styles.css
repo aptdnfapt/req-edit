@@ -1,0 +1,109 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #020617;
+  overflow: hidden;
+}
+
+/* JsonEditor dark theme overrides */
+.jsoneditor {
+  border: none !important;
+  background: #0f172a !important;
+}
+
+.jsoneditor-outer {
+  background: #0f172a !important;
+}
+
+.jsoneditor-tree {
+  background: #0f172a !important;
+}
+
+.jsoneditor-tree .jsoneditor-field,
+.jsoneditor-tree .jsoneditor-value {
+  color: #e2e8f0 !important;
+}
+
+.jsoneditor-tree .jsoneditor-field.jsoneditor-active,
+.jsoneditor-tree .jsoneditor-value.jsoneditor-active {
+  background: #1e293b !important;
+}
+
+.jsoneditor-tree .jsoneditor-string {
+  color: #7dd3fc !important;
+}
+
+.jsoneditor-tree .jsoneditor-number {
+  color: #fbbf24 !important;
+}
+
+.jsoneditor-tree .jsoneditor-boolean {
+  color: #f472b6 !important;
+}
+
+.jsoneditor-tree .jsoneditor-null {
+  color: #64748b !important;
+}
+
+.jsoneditor-menu {
+  background: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+.jsoneditor-contextmenu {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+.jsoneditor-contextmenu button {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+.jsoneditor-contextmenu button:hover {
+  background: #334155 !important;
+}
+
+.jsoneditor-search {
+  background: #1e293b !important;
+}
+
+.jsoneditor-search input {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+.jsoneditor-modal {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+.jsoneditor-modal input {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+.jsoneditor-modal button {
+  background: #3b82f6 !important;
+  border: none !important;
+}
+
+.jsoneditor-mode-code .ace_editor {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.ace_gutter {
+  background: #1e293b !important;
+}
+
+.ace_gutter-active-line {
+  background: #334155 !important;
+}
