@@ -6,7 +6,7 @@ import { PayloadTree } from './components/PayloadTree';
 import { ResponseView } from './components/ResponseView';
 import { Toolbar } from './components/Toolbar';
 import { useHistory } from './hooks/useHistory';
-import { parseCurl, ParsedCurl } from './utils/curlParser';
+import { parseCurl, ParsedCurl, toPrettyCurl } from './utils/curlParser';
 import { runRequest } from './utils/apiProxy';
 
 const emptyParsed: ParsedCurl = {
@@ -30,6 +30,7 @@ export function App() {
   const [showResponse, setShowResponse] = useState(true);
   const [responseHeight, setResponseHeight] = useState(200);
   const [sidebarWidth, setSidebarWidth] = useState(280);
+  const [sidebarView, setSidebarView] = useState<'structured' | 'raw'>('structured');
   const [theme, setTheme] = useState<Theme>('dark');
   const { state: parsed, push: pushHistory, undo, redo, canUndo, canRedo, reset: resetHistory } = useHistory<ParsedCurl>(emptyParsed);
   const [response, setResponse] = useState<any>(null);
@@ -210,12 +211,29 @@ export function App() {
           <div style={{ ...styles.main, ...(showResponse ? { height: `calc(100vh - 52px - ${responseHeight}px)` } : {}) }}>
             <aside style={{ ...styles.sidebar, width: sidebarWidth }}>
               <div style={styles.sidebarSection}>
-                <div style={styles.sidebarTitle}>REQUEST</div>
-                <UrlBar url={parsed.url} method={parsed.method} onUrlChange={handleUrlChange} onMethodChange={handleMethodChange} colors={colors} />
-              </div>
-              <div style={styles.sidebarSection}>
-                <div style={styles.sidebarTitle}>HEADERS</div>
-                <HeadersEditor headers={parsed.headers} onChange={handleHeadersChange} colors={colors} />
+                <div style={styles.sidebarHeader}>
+                  <span style={styles.sidebarTitle}>REQUEST</span>
+                  <div style={styles.viewToggle}>
+                    <button onClick={() => setSidebarView('structured')} style={{ ...styles.viewBtn, ...(sidebarView === 'structured' ? styles.viewBtnActive : {}) }}>FORM</button>
+                    <button onClick={() => setSidebarView('raw')} style={{ ...styles.viewBtn, ...(sidebarView === 'raw' ? styles.viewBtnActive : {}) }}>RAW</button>
+                  </div>
+                </div>
+                {sidebarView === 'structured' ? (
+                  <>
+                    <UrlBar url={parsed.url} method={parsed.method} onUrlChange={handleUrlChange} onMethodChange={handleMethodChange} colors={colors} />
+                    <div style={styles.sectionSpacer}>
+                      <div style={styles.sidebarTitle}>HEADERS</div>
+                      <HeadersEditor headers={parsed.headers} onChange={handleHeadersChange} colors={colors} />
+                    </div>
+                  </>
+                ) : (
+                  <textarea
+                    value={toPrettyCurl(parsed)}
+                    readOnly
+                    style={styles.rawTextarea}
+                    spellCheck={false}
+                  />
+                )}
               </div>
               <div
                 style={styles.sidebarResize}
@@ -276,7 +294,7 @@ export function App() {
   );
 }
 
-function getStyles(c: typeof colors): Record<string, React.CSSProperties> {
+function getStyles(c: any): Record<string, React.CSSProperties> {
   return {
     container: {
       height: '100vh',
@@ -361,15 +379,58 @@ function getStyles(c: typeof colors): Record<string, React.CSSProperties> {
     },
     sidebarSection: {
       padding: '10px',
-      borderBottom: `1px solid ${c.border}`,
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+    },
+    sidebarHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '8px',
     },
     sidebarTitle: {
       fontSize: '9px',
       fontWeight: 700,
       textTransform: 'uppercase',
       color: c.textMuted,
-      marginBottom: '8px',
       letterSpacing: '1px',
+    },
+    viewToggle: {
+      display: 'flex',
+      gap: '2px',
+    },
+    viewBtn: {
+      padding: '2px 6px',
+      border: 'none',
+      backgroundColor: 'transparent',
+      color: c.textMuted,
+      cursor: 'pointer',
+      fontSize: '9px',
+      fontWeight: 600,
+    },
+    viewBtnActive: {
+      backgroundColor: c.accent,
+      color: c.text,
+    },
+    sectionSpacer: {
+      marginTop: '10px',
+      flex: 1,
+      overflow: 'auto',
+    },
+    rawTextarea: {
+      flex: 1,
+      width: '100%',
+      padding: '8px',
+      border: 'none',
+      backgroundColor: c.bgAlt2,
+      color: c.text,
+      fontSize: '10px',
+      fontFamily: 'monospace',
+      resize: 'none',
+      whiteSpace: 'pre',
+      overflow: 'auto',
     },
     editor: {
       flex: 1,
@@ -418,18 +479,3 @@ function getStyles(c: typeof colors): Record<string, React.CSSProperties> {
     },
   };
 }
-
-const colors = {
-  bg: '#0a0a0a',
-  bgAlt: '#141414',
-  bgAlt2: '#1a1a1a',
-  border: '#2a2a2a',
-  borderAlt: '#3a3a3a',
-  text: '#e0e0e0',
-  textMuted: '#808080',
-  accent: '#606060',
-  accentHover: '#707070',
-  success: '#505050',
-  error: '#402020',
-  errorText: '#ff8080',
-};
