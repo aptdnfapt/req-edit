@@ -42,6 +42,10 @@ export function App() {
     setTheme(t => t === 'dark' ? 'light' : 'dark');
   }, []);
 
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
   const colors = theme === 'dark' ? {
     bg: '#0a0a0a',
     bgAlt: '#141414',

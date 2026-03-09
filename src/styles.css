@@ -24,14 +24,28 @@ body {
   background: #141414 !important;
 }
 
+.jsoneditor-tree-inner {
+  background: #141414 !important;
+}
+
 .jsoneditor-tree .jsoneditor-field,
 .jsoneditor-tree .jsoneditor-value {
   color: #e0e0e0 !important;
+  background: transparent !important;
 }
 
 .jsoneditor-tree .jsoneditor-field.jsoneditor-active,
-.jsoneditor-tree .jsoneditor-value.jsoneditor-active {
+.jsoneditor-tree .jsoneditor-value.jsoneditor-active,
+.jsoneditor-tree .jsoneditor-field:hover,
+.jsoneditor-tree .jsoneditor-value:hover,
+.jsoneditor-tree tr:hover {
   background: #2a2a2a !important;
+}
+
+.jsoneditor-tree .jsoneditor-field:focus,
+.jsoneditor-tree .jsoneditor-value:focus {
+  background: #3a3a3a !important;
+  outline: none !important;
 }
 
 .jsoneditor-tree .jsoneditor-string {
@@ -50,9 +64,37 @@ body {
   color: #606060 !important;
 }
 
+.jsoneditor-tree .jsoneditor-dragarea {
+  background: #2a2a2a !important;
+}
+
+.jsoneditor-tree .jsoneditor-dragarea:hover {
+  background: #3a3a3a !important;
+}
+
+.jsoneditor-tree button.jsoneditor-dragarea {
+  background: #2a2a2a !important;
+}
+
 .jsoneditor-menu {
   background: #1a1a1a !important;
   border-bottom: 1px solid #2a2a2a !important;
+}
+
+.jsoneditor-menu button {
+  background: #2a2a2a !important;
+  color: #a0a0a0 !important;
+  border: none !important;
+}
+
+.jsoneditor-menu button:hover {
+  background: #3a3a3a !important;
+  color: #e0e0e0 !important;
+}
+
+.jsoneditor-menu button.jsoneditor-selected,
+.jsoneditor-menu button:active {
+  background: #4a4a4a !important;
 }
 
 .jsoneditor-contextmenu {
@@ -69,6 +111,10 @@ body {
   background: #2a2a2a !important;
 }
 
+.jsoneditor-contextmenu button.jsoneditor-selected {
+  background: #3a3a3a !important;
+}
+
 .jsoneditor-search {
   background: #1a1a1a !important;
 }
@@ -77,6 +123,16 @@ body {
   background: #141414 !important;
   color: #e0e0e0 !important;
   border: 1px solid #2a2a2a !important;
+}
+
+.jsoneditor-search button {
+  background: #2a2a2a !important;
+  color: #a0a0a0 !important;
+  border: none !important;
+}
+
+.jsoneditor-search button:hover {
+  background: #3a3a3a !important;
 }
 
 .jsoneditor-modal {
@@ -91,10 +147,20 @@ body {
 }
 
 .jsoneditor-modal button {
-  background: #606060 !important;
+  background: #3a3a3a !important;
   border: none !important;
+  color: #e0e0e0 !important;
 }
 
+.jsoneditor-modal button:hover {
+  background: #4a4a4a !important;
+}
+
+.jsoneditor-modal .jsoneditor-button-group {
+  background: #2a2a2a !important;
+}
+
+/* Ace editor (code mode) overrides */
 .jsoneditor-mode-code .ace_editor {
   background: #141414 !important;
   color: #e0e0e0 !important;
@@ -105,6 +171,55 @@ body {
 }
 
 .ace_gutter-active-line {
+  background: #2a2a2a !important;
+}
+
+.ace_cursor {
+  color: #e0e0e0 !important;
+}
+
+.ace_indent-guide {
+  background: transparent !important;
+}
+
+.ace_marker-layer .ace_active-line {
+  background: #1a1a1a !important;
+}
+
+.ace_marker-layer .ace_selection {
+  background: #3a3a3a !important;
+}
+
+.ace_scrollbar {
+  background: #0a0a0a !important;
+}
+
+.ace_scrollbar-inner {
+  background: #2a2a2a !important;
+}
+
+/* Remove any yellow/orange highlights */
+.jsoneditor-tree .jsoneditor-highlight,
+.jsoneditor-tree .jsoneditor-highlight-search,
+div.jsoneditor-highlight {
+  background: #3a3a3a !important;
+  border-color: #4a4a4a !important;
+}
+
+/* Table rows */
+.jsoneditor-tree table.jsoneditor-tree {
+  background: transparent !important;
+}
+
+.jsoneditor-tree table.jsoneditor-tree tbody tr {
+  background: transparent !important;
+}
+
+.jsoneditor-tree table.jsoneditor-tree tbody tr:hover {
+  background: #1a1a1a !important;
+}
+
+.jsoneditor-tree table.jsoneditor-tree tbody tr.jsoneditor-selected {
   background: #2a2a2a !important;
 }
 
@@ -120,6 +235,12 @@ body.light .jsoneditor-tree .jsoneditor-value {
   color: #1a1a1a !important;
 }
 
+body.light .jsoneditor-tree .jsoneditor-field.jsoneditor-active,
+body.light .jsoneditor-tree .jsoneditor-value.jsoneditor-active,
+body.light .jsoneditor-tree tr:hover {
+  background: #e0e0e0 !important;
+}
+
 body.light .jsoneditor-menu,
 body.light .jsoneditor-contextmenu,
 body.light .jsoneditor-search,
@@ -132,4 +253,23 @@ body.light .jsoneditor-search input {
   background: #ffffff !important;
   color: #1a1a1a !important;
   border-color: #d0d0d0 !important;
+}
+
+body.light .jsoneditor-menu button,
+body.light .jsoneditor-contextmenu button {
+  background: #d0d0d0 !important;
+  color: #1a1a1a !important;
+}
+
+body.light .jsoneditor-menu button:hover,
+body.light .jsoneditor-contextmenu button:hover {
+  background: #c0c0c0 !important;
+}
+
+body.light .ace_marker-layer .ace_active-line {
+  background: #eaeaea !important;
+}
+
+body.light .ace_marker-layer .ace_selection {
+  background: #c0c0c0 !important;
 }
