@@ -12,7 +12,7 @@ interface Props {
   colors: any;
 }
 
-export function Toolbar({ parsed, canUndo, canRedo, onUndo, onRedo, onRun, isRunning, colors }: Props) {
+export function Toolbar({ parsed, onRun, isRunning, colors }: Props) {
   const styles = getStyles(colors);
 
   const copyCurl = (format: 'minified' | 'pretty') => {
@@ -23,8 +23,6 @@ export function Toolbar({ parsed, canUndo, canRedo, onUndo, onRedo, onRun, isRun
 
   return (
     <div style={styles.container}>
-      <button onClick={onUndo} disabled={!canUndo} style={{ ...styles.btn, ...(!canUndo ? styles.btnDisabled : {}) }} title="Undo">UNDO</button>
-      <button onClick={onRedo} disabled={!canRedo} style={{ ...styles.btn, ...(!canRedo ? styles.btnDisabled : {}) }} title="Redo">REDO</button>
       <button onClick={() => copyCurl('minified')} disabled={!parsed} style={{ ...styles.btn, ...(!parsed ? styles.btnDisabled : {}) }} title="Copy minified">MIN</button>
       <button onClick={() => copyCurl('pretty')} disabled={!parsed} style={{ ...styles.btn, ...(!parsed ? styles.btnDisabled : {}) }} title="Copy pretty">FMT</button>
       <button onClick={onRun} disabled={!parsed || isRunning} style={{ ...styles.btn, ...styles.btnRun, ...((parsed && !isRunning) ? {} : styles.btnDisabled) }}>

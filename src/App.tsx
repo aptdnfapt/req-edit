@@ -9,13 +9,7 @@ import { useHistory } from './hooks/useHistory';
 import { parseCurl, ParsedCurl, toPrettyCurl } from './utils/curlParser';
 import { runRequest } from './utils/apiProxy';
 
-const emptyParsed: ParsedCurl = {
-  url: '',
-  method: 'POST',
-  headers: [],
-  body: null,
-  raw: ''
-};
+const emptyHeaders = { url: '', method: 'POST', headers: [] as { key: string; value: string }[] };
 
 export type Theme = 'dark' | 'light';
 
@@ -32,7 +26,11 @@ export function App() {
   const [sidebarWidth, setSidebarWidth] = useState(280);
   const [sidebarView, setSidebarView] = useState<'structured' | 'raw'>('structured');
   const [theme, setTheme] = useState<Theme>('dark');
-  const { state: parsed, push: pushHistory, undo, redo, canUndo, canRedo, reset: resetHistory } = useHistory<ParsedCurl>(emptyParsed);
+  
+  // Separate histories for headers and body
+  const headerHistory = useHistory<typeof emptyHeaders>(emptyHeaders);
+  const bodyHistory = useHistory<any>(null);
+  
   const [response, setResponse] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [rawStream, setRawStream] = useState('');
@@ -75,33 +73,47 @@ export function App() {
     errorText: '#cc0000',
   };
 
+  // Combined parsed object
+  const parsed: ParsedCurl = {
+    url: headerHistory.state.url,
+    method: headerHistory.state.method,
+    headers: headerHistory.state.headers,
+    body: bodyHistory.state,
+    raw: ''
+  };
+
   const handleParse = useCallback(() => {
     if (!curlInput.trim()) return;
     const result = parseCurl(curlInput);
-    resetHistory(result);
+    headerHistory.reset({
+      url: result.url,
+      method: result.method,
+      headers: result.headers
+    });
+    bodyHistory.reset(result.body);
     setResponse(null);
     setError(null);
     setRawStream('');
     setShowInput(false);
-  }, [curlInput, resetHistory]);
+  }, [curlInput, headerHistory, bodyHistory]);
 
   const handleUrlChange = useCallback((url: string) => {
-    pushHistory({ ...parsed, url });
-  }, [parsed, pushHistory]);
+    headerHistory.push({ ...headerHistory.state, url });
+  }, [headerHistory]);
 
   const handleMethodChange = useCallback((method: string) => {
-    pushHistory({ ...parsed, method });
-  }, [parsed, pushHistory]);
+    headerHistory.push({ ...headerHistory.state, method });
+  }, [headerHistory]);
 
   const handleHeadersChange = useCallback((headers: { key: string; value: string }[]) => {
-    pushHistory({ ...parsed, headers });
-  }, [parsed, pushHistory]);
+    headerHistory.push({ ...headerHistory.state, headers });
+  }, [headerHistory]);
 
   const handleBodyChange = useCallback((body: any) => {
-    pushHistory({ ...parsed, body });
-  }, [parsed, pushHistory]);
+    bodyHistory.push(body);
+  }, [bodyHistory]);
 
-  const isStreamRequest = parsed.body?.stream === true;
+  const isStreamRequest = bodyHistory.state?.stream === true;
 
   const handleRun = useCallback(async () => {
     if (!parsed.url) return;
@@ -155,9 +167,19 @@ export function App() {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.preventDefault();
         if (e.shiftKey) {
-          redo();
+          // Redo - determine which section is focused
+          if (document.activeElement?.closest('[data-section="body"]')) {
+            bodyHistory.redo();
+          } else {
+            headerHistory.redo();
+          }
         } else {
-          undo();
+          // Undo
+          if (document.activeElement?.closest('[data-section="body"]')) {
+            bodyHistory.undo();
+          } else {
+            headerHistory.undo();
+          }
         }
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -167,7 +189,7 @@ export function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, handleRun]);
+  }, [headerHistory, bodyHistory, handleRun]);
 
   const styles = getStyles(colors);
 
@@ -190,10 +212,10 @@ export function App() {
             </button>
             <Toolbar
               parsed={parsed}
-              canUndo={canUndo}
-              canRedo={canRedo}
-              onUndo={undo}
-              onRedo={redo}
+              canUndo={false}
+              canRedo={false}
+              onUndo={() => {}}
+              onRedo={() => {}}
               onRun={handleRun}
               isRunning={isRunning}
               colors={colors}
@@ -209,7 +231,7 @@ export function App() {
 
         {parsed.url && (
           <div style={{ ...styles.main, ...(showResponse ? { height: `calc(100vh - 52px - ${responseHeight}px)` } : {}) }}>
-            <aside style={{ ...styles.sidebar, width: sidebarWidth }}>
+            <aside style={{ ...styles.sidebar, width: sidebarWidth }} data-section="headers">
               <div style={styles.sidebarSection}>
                 <div style={styles.sidebarHeader}>
                   <span style={styles.sidebarTitle}>REQUEST</span>
@@ -222,7 +244,13 @@ export function App() {
                   <>
                     <UrlBar url={parsed.url} method={parsed.method} onUrlChange={handleUrlChange} onMethodChange={handleMethodChange} colors={colors} />
                     <div style={styles.sectionSpacer}>
-                      <div style={styles.sidebarTitle}>HEADERS</div>
+                      <div style={styles.sidebarTitleWithActions}>
+                        <span>HEADERS</span>
+                        <div style={styles.undoRedo}>
+                          <button onClick={headerHistory.undo} disabled={!headerHistory.canUndo} style={{ ...styles.undoBtn, ...(!headerHistory.canUndo ? styles.undoDisabled : {}) }}>U</button>
+                          <button onClick={headerHistory.redo} disabled={!headerHistory.canRedo} style={{ ...styles.undoBtn, ...(!headerHistory.canRedo ? styles.undoDisabled : {}) }}>R</button>
+                        </div>
+                      </div>
                       <HeadersEditor headers={parsed.headers} onChange={handleHeadersChange} colors={colors} />
                     </div>
                   </>
@@ -254,8 +282,17 @@ export function App() {
                 }}
               />
             </aside>
-            <main style={styles.editor}>
-              <PayloadTree data={parsed.body} url={parsed.url} onChange={handleBodyChange} colors={colors} />
+            <main style={styles.editor} data-section="body">
+              <PayloadTree 
+                data={parsed.body} 
+                url={parsed.url} 
+                onChange={handleBodyChange} 
+                colors={colors}
+                canUndo={bodyHistory.canUndo}
+                canRedo={bodyHistory.canRedo}
+                onUndo={bodyHistory.undo}
+                onRedo={bodyHistory.redo}
+              />
             </main>
           </div>
         )}
@@ -397,6 +434,17 @@ function getStyles(c: any): Record<string, React.CSSProperties> {
       color: c.textMuted,
       letterSpacing: '1px',
     },
+    sidebarTitleWithActions: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      fontSize: '9px',
+      fontWeight: 700,
+      textTransform: 'uppercase',
+      color: c.textMuted,
+      letterSpacing: '1px',
+      marginBottom: '8px',
+    },
     viewToggle: {
       display: 'flex',
       gap: '2px',
@@ -418,6 +466,23 @@ function getStyles(c: any): Record<string, React.CSSProperties> {
       marginTop: '10px',
       flex: 1,
       overflow: 'auto',
+    },
+    undoRedo: {
+      display: 'flex',
+      gap: '2px',
+    },
+    undoBtn: {
+      padding: '1px 4px',
+      border: 'none',
+      backgroundColor: c.bgAlt2,
+      color: c.textMuted,
+      cursor: 'pointer',
+      fontSize: '8px',
+      fontWeight: 600,
+    },
+    undoDisabled: {
+      opacity: 0.3,
+      cursor: 'not-allowed',
     },
     rawTextarea: {
       flex: 1,

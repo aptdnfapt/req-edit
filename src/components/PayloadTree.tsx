@@ -8,9 +8,13 @@ interface Props {
   url: string;
   onChange: (data: any) => void;
   colors: any;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
 }
 
-export function PayloadTree({ data, url, onChange, colors }: Props) {
+export function PayloadTree({ data, url, onChange, colors, canUndo, canRedo, onUndo, onRedo }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<JSONEditor | null>(null);
   const [view, setView] = useState<'tree' | 'raw'>('tree');
@@ -59,6 +63,12 @@ export function PayloadTree({ data, url, onChange, colors }: Props) {
       <div style={styles.header}>
         <span style={styles.title}>PAYLOAD ({provider})</span>
         <div style={styles.tabs}>
+          {(canUndo || canRedo) && (
+            <div style={styles.undoRedo}>
+              <button onClick={onUndo} disabled={!canUndo} style={{ ...styles.undoBtn, ...(!canUndo ? styles.undoDisabled : {}) }}>U</button>
+              <button onClick={onRedo} disabled={!canRedo} style={{ ...styles.undoBtn, ...(!canRedo ? styles.undoDisabled : {}) }}>R</button>
+            </div>
+          )}
           <button onClick={() => setView('tree')} style={{ ...styles.tab, ...(view === 'tree' ? styles.tabActive : {}) }}>TREE</button>
           <button onClick={() => setView('raw')} style={{ ...styles.tab, ...(view === 'raw' ? styles.tabActive : {}) }}>RAW</button>
         </div>
@@ -114,6 +124,24 @@ function getStyles(c: any): Record<string, React.CSSProperties> {
     tabs: {
       display: 'flex',
       gap: '2px',
+    },
+    undoRedo: {
+      display: 'flex',
+      gap: '2px',
+      marginRight: '8px',
+    },
+    undoBtn: {
+      padding: '1px 4px',
+      border: 'none',
+      backgroundColor: c.bgAlt,
+      color: c.textMuted,
+      cursor: 'pointer',
+      fontSize: '8px',
+      fontWeight: 600,
+    },
+    undoDisabled: {
+      opacity: 0.3,
+      cursor: 'not-allowed',
     },
     tab: {
       padding: '3px 8px',
