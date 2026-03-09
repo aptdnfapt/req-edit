@@ -16,6 +16,58 @@ body {
   background: #141414 !important;
 }
 
+/* Menu buttons - show as text labels */
+.jsoneditor-menu {
+  background: #1a1a1a !important;
+  border-bottom: 1px solid #2a2a2a !important;
+}
+
+.jsoneditor-menu > button {
+  width: auto !important;
+  padding: 2px 8px !important;
+  background-image: none !important;
+  color: #808080 !important;
+  font-size: 10px !important;
+  font-family: 'SF Mono', 'Menlo', monospace !important;
+  border: none !important;
+  text-indent: 0 !important;
+}
+
+.jsoneditor-menu > button:hover {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+}
+
+.jsoneditor-menu > button:active,
+.jsoneditor-menu > button:focus {
+  background-color: #3a3a3a !important;
+  color: #e0e0e0 !important;
+}
+
+.jsoneditor-menu > button:disabled {
+  opacity: 0.4 !important;
+}
+
+/* Mode button */
+.jsoneditor-menu > .jsoneditor-modes > button {
+  width: auto !important;
+  padding: 2px 8px !important;
+  background-image: none !important;
+  color: #808080 !important;
+  font-size: 10px !important;
+}
+
+/* Collapse/Expand/Undo/Redo/Format buttons */
+.jsoneditor-menu > button.jsoneditor-collapse-all::after { content: "COLLAPSE"; }
+.jsoneditor-menu > button.jsoneditor-expand-all::after { content: "EXPAND"; }
+.jsoneditor-menu > button.jsoneditor-undo::after { content: "UNDO"; }
+.jsoneditor-menu > button.jsoneditor-redo::after { content: "REDO"; }
+.jsoneditor-menu > button.jsoneditor-format::after { content: "FORMAT"; }
+.jsoneditor-menu > button.jsoneditor-compact::after { content: "COMPACT"; }
+.jsoneditor-menu > button.jsoneditor-sort::after { content: "SORT"; }
+.jsoneditor-menu > button.jsoneditor-transform::after { content: "TRANSFORM"; }
+.jsoneditor-menu > button.jsoneditor-repair::after { content: "REPAIR"; }
+
 .jsoneditor-outer {
   background: #141414 !important;
 }
@@ -259,6 +311,11 @@ body.light .jsoneditor-menu button,
 body.light .jsoneditor-contextmenu button {
   background: #d0d0d0 !important;
   color: #1a1a1a !important;
+}
+
+body.light .jsoneditor-menu > button {
+  background-image: none !important;
+  color: #606060 !important;
 }
 
 body.light .jsoneditor-menu button:hover,
