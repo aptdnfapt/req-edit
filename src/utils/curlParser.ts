@@ -18,26 +18,39 @@ function extractQuotedValue(str: string, startIndex: number): { value: string; e
   while (i < str.length) {
     const char = str[i];
     
-    if (quote === "'" && str.slice(i, i + 4) === "'\\''") {
-      value += "'";
-      i += 4;
-      continue;
+    // At a single quote - check if it's part of escape sequence or end
+    if (quote === "'" && char === "'") {
+      // Check for '\'' pattern (escaped single quote)
+      if (str.slice(i, i + 4) === "'\\''") {
+        value += "'";
+        i += 4;
+        continue;
+      }
+      // Check for '"'"' pattern (double-quoted single quote)
+      if (str.slice(i, i + 5) === "'\"'\"'") {
+        value += "'";
+        i += 5;
+        continue;
+      }
+      // Normal end of single-quoted string
+      return { value, endIndex: i + 1 };
     }
     
+    // Handle double-quote escapes
     if (quote === '"' && char === '\\' && i + 1 < str.length) {
       const next = str[i + 1];
       if (next === 'n') { value += '\n'; i += 2; continue; }
       if (next === 't') { value += '\t'; i += 2; continue; }
       if (next === 'r') { value += '\r'; i += 2; continue; }
       if (next === '"' || next === '\\' || next === '/') { value += next; i += 2; continue; }
-      value += char + next;
-      i += 2;
-      continue;
+      value += next; i += 2; continue;
     }
     
-    if (char === quote) {
+    // End of double-quoted string
+    if (quote === '"' && char === '"') {
       return { value, endIndex: i + 1 };
     }
+    
     value += char;
     i++;
   }
@@ -45,7 +58,7 @@ function extractQuotedValue(str: string, startIndex: number): { value: string; e
   return { value, endIndex: i };
 }
 
-const SKIP_FLAGS = ['-s', '-S', '-L', '-l', '-i', '-I', '-k', '-v', '--silent', '--location', '--insecure', '--verbose'];
+const SKIP_FLAGS = ['-s', '-S', '-L', '-l', '-i', '-I', '-k', '-v', '--silent', '--location', '--insecure', '--verbose', '--compressed'];
 
 export function parseCurl(curlString: string): ParsedCurl {
   try {
