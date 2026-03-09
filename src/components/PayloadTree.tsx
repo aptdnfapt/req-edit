@@ -64,9 +64,9 @@ export function PayloadTree({ data, url, onChange, colors, canUndo, canRedo, onU
         <span style={styles.title}>PAYLOAD ({provider})</span>
         <div style={styles.tabs}>
           {(canUndo || canRedo) && (
-            <div style={styles.undoRedo}>
-              <button onClick={onUndo} disabled={!canUndo} style={{ ...styles.undoBtn, ...(!canUndo ? styles.undoDisabled : {}) }}>U</button>
-              <button onClick={onRedo} disabled={!canRedo} style={{ ...styles.undoBtn, ...(!canRedo ? styles.undoDisabled : {}) }}>R</button>
+            <div style={styles.undoBtns}>
+              <button onClick={onUndo} disabled={!canUndo} style={{ ...styles.undoBtn, ...(!canUndo ? styles.undoDisabled : {}) }}>UNDO</button>
+              <button onClick={onRedo} disabled={!canRedo} style={{ ...styles.undoBtn, ...(!canRedo ? styles.undoDisabled : {}) }}>REDO</button>
             </div>
           )}
           <button onClick={() => setView('tree')} style={{ ...styles.tab, ...(view === 'tree' ? styles.tabActive : {}) }}>TREE</button>
@@ -125,18 +125,18 @@ function getStyles(c: any): Record<string, React.CSSProperties> {
       display: 'flex',
       gap: '2px',
     },
-    undoRedo: {
+    undoBtns: {
       display: 'flex',
-      gap: '2px',
+      gap: '4px',
       marginRight: '8px',
     },
     undoBtn: {
-      padding: '1px 4px',
+      padding: '2px 8px',
       border: 'none',
-      backgroundColor: c.bgAlt,
+      backgroundColor: c.bgAlt2,
       color: c.textMuted,
       cursor: 'pointer',
-      fontSize: '8px',
+      fontSize: '9px',
       fontWeight: 600,
     },
     undoDisabled: {

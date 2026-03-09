@@ -245,10 +245,9 @@ export function App() {
                     <UrlBar url={parsed.url} method={parsed.method} onUrlChange={handleUrlChange} onMethodChange={handleMethodChange} colors={colors} />
                     <div style={styles.sectionSpacer}>
                       <div style={styles.sidebarTitleWithActions}>
-                        <span>HEADERS</span>
-                        <div style={styles.undoRedo}>
-                          <button onClick={headerHistory.undo} disabled={!headerHistory.canUndo} style={{ ...styles.undoBtn, ...(!headerHistory.canUndo ? styles.undoDisabled : {}) }}>U</button>
-                          <button onClick={headerHistory.redo} disabled={!headerHistory.canRedo} style={{ ...styles.undoBtn, ...(!headerHistory.canRedo ? styles.undoDisabled : {}) }}>R</button>
+                        <div style={styles.undoBtns}>
+                          <button onClick={headerHistory.undo} disabled={!headerHistory.canUndo} style={{ ...styles.undoBtn, ...(!headerHistory.canUndo ? styles.undoDisabled : {}) }}>UNDO</button>
+                          <button onClick={headerHistory.redo} disabled={!headerHistory.canRedo} style={{ ...styles.undoBtn, ...(!headerHistory.canRedo ? styles.undoDisabled : {}) }}>REDO</button>
                         </div>
                       </div>
                       <HeadersEditor headers={parsed.headers} onChange={handleHeadersChange} colors={colors} />
@@ -436,14 +435,27 @@ function getStyles(c: any): Record<string, React.CSSProperties> {
     },
     sidebarTitleWithActions: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
       alignItems: 'center',
-      fontSize: '9px',
-      fontWeight: 700,
-      textTransform: 'uppercase',
-      color: c.textMuted,
-      letterSpacing: '1px',
+      gap: '4px',
       marginBottom: '8px',
+    },
+    undoBtns: {
+      display: 'flex',
+      gap: '4px',
+    },
+    undoBtn: {
+      padding: '2px 8px',
+      border: 'none',
+      backgroundColor: c.bgAlt2,
+      color: c.textMuted,
+      cursor: 'pointer',
+      fontSize: '9px',
+      fontWeight: 600,
+    },
+    undoDisabled: {
+      opacity: 0.3,
+      cursor: 'not-allowed',
     },
     viewToggle: {
       display: 'flex',
@@ -466,23 +478,6 @@ function getStyles(c: any): Record<string, React.CSSProperties> {
       marginTop: '10px',
       flex: 1,
       overflow: 'auto',
-    },
-    undoRedo: {
-      display: 'flex',
-      gap: '2px',
-    },
-    undoBtn: {
-      padding: '1px 4px',
-      border: 'none',
-      backgroundColor: c.bgAlt2,
-      color: c.textMuted,
-      cursor: 'pointer',
-      fontSize: '8px',
-      fontWeight: 600,
-    },
-    undoDisabled: {
-      opacity: 0.3,
-      cursor: 'not-allowed',
     },
     rawTextarea: {
       flex: 1,
