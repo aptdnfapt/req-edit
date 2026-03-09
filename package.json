@@ -1,0 +1,45 @@
+{
+  "name": "llm-req-block-editor",
+  "version": "1.0.0",
+  "description": "LLM API curl editor and runner",
+  "type": "module",
+  "bin": {
+    "llm-req-block-editor": "./bin.cjs"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run vite\"",
+    "vite": "vite",
+    "server": "tsx server.ts",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "curl",
+    "llm",
+    "api",
+    "openai",
+    "anthropic"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsoneditor": "^10.4.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.6",
+    "@types/jsoneditor": "^9.9.6",
+    "@types/node": "^25.3.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
