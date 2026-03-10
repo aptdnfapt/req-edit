@@ -1,0 +1,31 @@
+# Source files
+src/
+*.ts
+*.tsx
+*.jsx
+vite.config.ts
+tsconfig.json
+tsconfig.node.json
+
+# Dev only
+.git
+.gitignore
+*.md
+!README.md
+
+# Logs
+*.log
+npm-debug.log*
+
+# Tests
+test/
+tests/
+__tests__/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

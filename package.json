@@ -1,5 +1,5 @@
 {
-  "name": "llm-req-block-editor",
+  "name": "req-edit",
   "version": "1.0.0",
   "description": "LLM API curl editor and runner",
   "type": "module",
@@ -18,17 +18,28 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "esbuild server.ts --bundle --platform=node --target=node18 --format=esm --external:express --external:cors --outfile=dist/server.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "curl",
     "llm",
     "api",
     "openai",
-    "anthropic"
+    "anthropic",
+    "editor",
+    "cli"
   ],
-  "author": "",
+  "author": "aptdnfapt",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aptdnfapt/req-edit.git"
+  },
+  "homepage": "https://github.com/aptdnfapt/req-edit#readme",
+  "bugs": {
+    "url": "https://github.com/aptdnfapt/req-edit/issues"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1"
@@ -49,5 +60,8 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
