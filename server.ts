@@ -1,7 +1,16 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+
+const staticDir = __dirname;
+app.use(express.static(staticDir));
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
@@ -70,6 +79,9 @@ app.post('/api/run', async (req, res) => {
   }
 });
 
-app.listen(8679, '0.0.0.0', () => {
-  console.log('Proxy server running on http://0.0.0.0:8679');
+
+
+const PORT = process.env.PORT || 8678;
+app.listen(PORT, () => {
+  console.log(`LLM Request Block Editor running at http://localhost:${PORT}`);
 });

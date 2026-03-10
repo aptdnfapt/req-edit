@@ -3,14 +3,21 @@
   "version": "1.0.0",
   "description": "LLM API curl editor and runner",
   "type": "module",
+  "main": "dist/server.js",
   "bin": {
-    "llm-req-block-editor": "./bin.cjs"
+    "req-edit": "./bin.cjs"
   },
+  "files": [
+    "dist",
+    "bin.cjs"
+  ],
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run vite\"",
     "vite": "vite",
     "server": "tsx server.ts",
-    "build": "vite build",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "esbuild server.ts --bundle --platform=node --target=node18 --format=esm --external:express --external:cors --outfile=dist/server.js",
     "preview": "vite preview"
   },
   "keywords": [
@@ -23,14 +30,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@vitejs/plugin-react": "^5.1.4",
-    "concurrently": "^9.2.1",
     "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "jsoneditor": "^10.4.2",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "vite": "^7.3.1"
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -39,7 +40,14 @@
     "@types/node": "^25.3.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.27.3",
+    "jsoneditor": "^10.4.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
   }
 }
