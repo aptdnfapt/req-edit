@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/server.js",
   "bin": {
-    "req-edit": "./bin.cjs"
+    "req-edit": "bin.cjs"
   },
   "files": [
     "dist",
@@ -34,7 +34,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aptdnfapt/req-edit.git"
+    "url": "git+https://github.com/aptdnfapt/req-edit.git"
   },
   "homepage": "https://github.com/aptdnfapt/req-edit#readme",
   "bugs": {
