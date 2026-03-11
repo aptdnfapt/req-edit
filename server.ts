@@ -82,6 +82,7 @@ app.post('/api/run', async (req, res) => {
 
 
 const PORT = process.env.PORT || 8678;
-app.listen(PORT, () => {
-  console.log(`LLM Request Block Editor running at http://localhost:${PORT}`);
+const HOST = process.env.HOST || 'localhost';
+app.listen(Number(PORT), HOST, () => {
+  console.log(`LLM Request Block Editor running at http://${HOST}:${PORT}`);
 });
